@@ -10,7 +10,7 @@ productRouter.get("/", product.listProduct)
 productRouter.put("/:productId", product.updateProduct)
 productRouter.delete("/:productId", product.deleteProduct)
 
-productRouter.get("/inventory", inventory.listInventory)
+
 
 
 export default productRouter                                                                                

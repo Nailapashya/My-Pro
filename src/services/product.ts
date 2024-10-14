@@ -2,36 +2,13 @@ import { Product } from "@prisma/client"
 import db from "../libs/db"
 
 export const createProduct = async (body: Product) => {
-    const lastProduct = await db.product.findFirst({
-        orderBy: { id: 'desc' }
-    });
 
-    if (!lastProduct) {
-        return await db.product.create({
-            data: {
-                ...body,
-                code: 'PROD-001',
-                inventory: {
-                    create: {
-                        stock: 0,
-                        totalUsage: 0
-                    }
-                }
-            }
-        });
-    }
-
-    const lastCode = lastProduct.code;
-    const lastCodeNumber = parseInt(lastCode.replace('PROD-', '')) || 0;
-
-    const newCodeNumber = lastCodeNumber + 1;
-
-    const newCode = `PROD-${newCodeNumber.toString().padStart(3, '0')}`;
-
+    let codeNow = Date.now().toString()
     const newProduct = await db.product.create({
+
         data: {
             ...body,
-            code: newCode,
+            code: `PROD-${codeNow.slice(codeNow.length - 5)}`,
             inventory: {
                 create: {
                     stock: 0,

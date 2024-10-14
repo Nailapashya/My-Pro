@@ -13,13 +13,13 @@ export const listTransactions = async (req: Request, res: Response) => {
 
 export const addTransaction = async (req: Request, res: Response) => {
     try {
-        const { code, products, discount } = req.body;
+        const { products } = req.body;
 
-        if (!code || !products || !Array.isArray(products)) {
+        if (!products || !Array.isArray(products)) {
             res.status(400).json({ message: "Code and products are required" });
         }
 
-        const data = await transaction.addTransaction(code, products, discount);
+        const data = await transaction.addTransaction(products);
         res.status(200).json(data);
     } catch (error) {
         console.error(error);

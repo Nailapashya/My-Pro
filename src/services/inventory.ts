@@ -1,29 +1,19 @@
 import db from "../libs/db"
 
-// export const addProductToInventory = async (productId: string, stock: number) => {
-//     const existingProduct = await db.product.findUnique({
-//       where: { id: productId },
-//     });
-  
-//     if (!existingProduct) {
-//       throw new Error("Product not found");
-//     }
-  
-//     const inventory = await db.inventory.create({
-//       data: {
-//         productId: existingProduct.id,  
-//         stock,                           
-//       },
-//     });
-  
-//     return inventory;
-//   };
-
 export const listInventory = async() => {
-    return await db.inventory.findMany()
+    return await db.inventory.findMany({
+        include: {
+            product: {
+                select: {
+                    name: true
+                }
+            }
+        }
+    })
+
 }
 
-export const addStock = async (productId: string, stock: number) => {
+export const addStock = async (productId: string, stock: number, usage: number) => {
     const exitingInventory = await db.inventory.findFirst({
         where: {productId}
     })
@@ -34,9 +24,17 @@ export const addStock = async (productId: string, stock: number) => {
     }
 
     return await db.inventory.update({
-        where: {productId},
+        where: { productId },
         data: {
-            stock: exitingInventory.stock + stock
+            stock: (exitingInventory.stock + stock) - usage,
+            totalUsage: usage,
+        },
+        include: {
+            product: {
+                select: {
+                    name: true
+                }
+            }
         }
     })
 }
